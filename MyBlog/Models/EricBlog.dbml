@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="EricBlog" Class="EricBlogDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=W06-2010\SQLEXPRESS;Initial Catalog=EricBlog;Integrated Security=True;Pooling=False" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="EricBlogConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Comment" Member="Comments">
+    <Type Name="Comment">
+      <Column Name="CommentID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PostID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Author" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="CreatedOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Body" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Association Name="Post_Comment" Member="Post" ThisKey="PostID" OtherKey="PostID" Type="Post" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Post" Member="Posts">
+    <Type Name="Post">
+      <Column Name="PostID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Body" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="CreatedOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="PublishedOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Post_Comment" Member="Comments" ThisKey="PostID" OtherKey="PostID" Type="Comment" />
+      <Association Name="Post_Post" Member="Post2" ThisKey="PostID" OtherKey="PostID" Type="Post" Cardinality="One" />
+      <Association Name="Post_Post" Member="Post1" ThisKey="PostID" OtherKey="PostID" Type="Post" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

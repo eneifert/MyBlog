@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="EricBlog">
+  <DataContextMoniker Name="/EricBlogDataContext" />
+  <nestedChildShapes>
+    <classShape Id="7ab0ea10-7674-494e-ac87-01fe4285f4be" absoluteBounds="2.25, 1.75, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/EricBlogDataContext/Comment" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1b6588d9-8362-4d6b-bf76-7b2174c31249" absoluteBounds="2.265, 2.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="2368a41c-b8b9-4eda-b9eb-31941026c81a" absoluteBounds="5.5, 2.25, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/EricBlogDataContext/Post" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b5fa6959-9c10-4526-8318-02c5b0539bbf" absoluteBounds="5.515, 2.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(5.5 : 2.88544840494792); (4.25 : 2.88544840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/EricBlogDataContext/Post/Post_Comment" />
+      <nodes>
+        <classShapeMoniker Id="2368a41c-b8b9-4eda-b9eb-31941026c81a" />
+        <classShapeMoniker Id="7ab0ea10-7674-494e-ac87-01fe4285f4be" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.20552987154447 : 4.02089680989583); (6.20552987154447 : 4.27089680989583); (6.80849251552484 : 4.27089680989583); (6.80849251552484 : 4.02089680989583)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/EricBlogDataContext/Post/Post_Post" />
+      <nodes>
+        <classShapeMoniker Id="2368a41c-b8b9-4eda-b9eb-31941026c81a" />
+        <classShapeMoniker Id="2368a41c-b8b9-4eda-b9eb-31941026c81a" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>
