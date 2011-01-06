@@ -33,7 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DateTimeEnglishParser">
+      <HintPath>..\lib\DateTimeEnglishParser.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Ninject">
+      <HintPath>..\lib\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
@@ -69,10 +75,13 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PostController.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HtmlHelpers.cs" />
     <Compile Include="Helpers\PagedList.cs" />
+    <Compile Include="MetaData\ExcludeWordsAttribute.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EricBlog.cs">
       <DependentUpon>EricBlog.dbml</DependentUpon>
@@ -82,18 +91,26 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EricBlog.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\IBlogDataContext.cs" />
     <Compile Include="Models\IPager.cs" />
     <Compile Include="Models\PagedResultsViewModel.cs" />
+    <Compile Include="MetaData\PostMetaData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\NaturalDatesModelBinder.cs" />
+    <Compile Include="Utils\NinjectControllerFactory.cs" />
+    <Compile Include="Utils\PostValidationProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Scripts\CustomValidationRules.js" />
+    <Content Include="Views\Post\PostFormUserControl.ascx" />
     <Content Include="Views\Shared\404.aspx" />
     <Content Include="Views\Post\Create.aspx" />
     <Content Include="Views\Post\Details.aspx" />
     <Content Include="Views\Post\Edit.aspx" />
     <Content Include="Views\Post\Index.aspx" />
     <Content Include="Views\Shared\Paging.ascx" />
+    <Content Include="Views\Shared\EditorTemplates\RadioEditorTemplate.ascx" />
     <Content Include="Views\Shared\SearchForm.ascx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -130,14 +147,14 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Models\EricBlog.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>EricBlog.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Models\EricBlog.dbml.layout">

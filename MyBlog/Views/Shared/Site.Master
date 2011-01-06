@@ -36,5 +36,9 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript" src="<%= Url.Content("~/Scripts/MicrosoftAjax.js") %>"></script>
+    <script type="text/javascript" src="<%= Url.Content("~/Scripts/MicrosoftMvcValidation.js") %>"></script>    
+    <script type="text/javascript" src="<%= Url.Content("~/Scripts/CustomValidationRules.js") %>"></script>
 </body>
 </html>

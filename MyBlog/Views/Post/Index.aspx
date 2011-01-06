@@ -29,6 +29,9 @@
                 Body
             </th>
             <th>
+                Category
+            </th>
+            <th>
                 CreatedOn
             </th>
             <th>
@@ -52,6 +55,9 @@
             </td>
             <td>
                 <%: item.Body %>
+            </td>
+            <td>
+                <%: item.Category.CategoryName %>
             </td>
             <td>
                 <%: String.Format("{0:g}", item.CreatedOn) %>

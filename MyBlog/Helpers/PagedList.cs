@@ -13,7 +13,7 @@ namespace System.Web.Mvc
             set;
         }
 
-        int PageIndex
+        int CurrentPage
         {
             get;
             set;
@@ -25,43 +25,51 @@ namespace System.Web.Mvc
             set;
         }
 
-        bool IsPreviousPage
+        bool HasPreviousPage
         {
             get;
         }
 
-        bool IsNextPage
+        bool HasNextPage
         {
+            get;
+        }
+
+        int FirstResultIndex
+        {
+            get;
+        }
+
+        int LastResultIndex
+        {
+            get ; 
+        }
+
+        int PageCount
+        { 
             get;
         }
     }
 
     public class PagedList<T> : List<T>, IPagedList
     {
-        public PagedList(IQueryable<T> source, int index, int pageSize)
+        public PagedList(IEnumerable<T> source, int index, int pageSize)
         {
+            index--;
             this.TotalCount = source.Count();
             this.PageSize = pageSize;
-            this.PageIndex = index;
+            this.CurrentPage = index;
             this.AddRange(source.Skip(index * pageSize).Take(pageSize).ToList());
-        }
-
-        public PagedList(List<T> source, int index, int pageSize)
-        {
-            this.TotalCount = source.Count();
-            this.PageSize = pageSize;
-            this.PageIndex = index;
-            this.AddRange(source.Skip(index * pageSize).Take(pageSize).ToList());
-        }
+        }          
 
         public int FirstResultIndex
         {
-            get { return TotalCount == 0 ? 0 : 1 + PageSize * (PageIndex - 1); }
+            get { return CurrentPage == 0 ? 1 : 1 + PageSize * (CurrentPage); }
         }
 
         public int LastResultIndex
         {
-            get { return Math.Min(TotalCount, PageSize * PageIndex); }
+            get { return Math.Min(TotalCount, PageSize * (CurrentPage + 1)); }
         }
 
         public int PageCount
@@ -71,24 +79,24 @@ namespace System.Web.Mvc
 
         public int TotalCount { get;  set; }
 
-        public int PageIndex  { get; set; }
+        public int CurrentPage  { get; set; }
 
         public int PageSize
         { get; set; }
 
-        public bool IsPreviousPage
+        public bool HasPreviousPage
         {
             get
             {
-                return (PageIndex > 0);
+                return (CurrentPage > 0);
             }
         }
 
-        public bool IsNextPage
+        public bool HasNextPage
         {
             get
             {
-                return (PageIndex * PageSize) <= TotalCount;
+                return (CurrentPage * PageSize) <= TotalCount;
             }
         }
     }

@@ -23,7 +23,7 @@ namespace MyBlog.Models
 	
 	
 	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="EricBlog")]
-	public partial class EricBlogDataContext : System.Data.Linq.DataContext
+	public partial class EricBlogDataContext : System.Data.Linq.DataContext, IBlogDataContext
 	{
 		
 		private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
@@ -33,6 +33,9 @@ namespace MyBlog.Models
     partial void InsertComment(Comment instance);
     partial void UpdateComment(Comment instance);
     partial void DeleteComment(Comment instance);
+    partial void InsertCategory(Category instance);
+    partial void UpdateCategory(Category instance);
+    partial void DeleteCategory(Category instance);
     partial void InsertPost(Post instance);
     partial void UpdatePost(Post instance);
     partial void DeletePost(Post instance);
@@ -73,6 +76,14 @@ namespace MyBlog.Models
 			get
 			{
 				return this.GetTable<Comment>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Category> Categories
+		{
+			get
+			{
+				return this.GetTable<Category>();
 			}
 		}
 		
@@ -284,6 +295,120 @@ namespace MyBlog.Models
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Category")]
+	public partial class Category : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CategoryID;
+		
+		private string _CategoryName;
+		
+		private EntitySet<Post> _Posts;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCategoryIDChanging(int value);
+    partial void OnCategoryIDChanged();
+    partial void OnCategoryNameChanging(string value);
+    partial void OnCategoryNameChanged();
+    #endregion
+		
+		public Category()
+		{
+			this._Posts = new EntitySet<Post>(new Action<Post>(this.attach_Posts), new Action<Post>(this.detach_Posts));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CategoryID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int CategoryID
+		{
+			get
+			{
+				return this._CategoryID;
+			}
+			set
+			{
+				if ((this._CategoryID != value))
+				{
+					this.OnCategoryIDChanging(value);
+					this.SendPropertyChanging();
+					this._CategoryID = value;
+					this.SendPropertyChanged("CategoryID");
+					this.OnCategoryIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CategoryName", DbType="VarChar(50)")]
+		public string CategoryName
+		{
+			get
+			{
+				return this._CategoryName;
+			}
+			set
+			{
+				if ((this._CategoryName != value))
+				{
+					this.OnCategoryNameChanging(value);
+					this.SendPropertyChanging();
+					this._CategoryName = value;
+					this.SendPropertyChanged("CategoryName");
+					this.OnCategoryNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Category_Post", Storage="_Posts", ThisKey="CategoryID", OtherKey="CategoryID")]
+		public EntitySet<Post> Posts
+		{
+			get
+			{
+				return this._Posts;
+			}
+			set
+			{
+				this._Posts.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Posts(Post entity)
+		{
+			this.SendPropertyChanging();
+			entity.Category = this;
+		}
+		
+		private void detach_Posts(Post entity)
+		{
+			this.SendPropertyChanging();
+			entity.Category = null;
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Post")]
 	public partial class Post : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -300,9 +425,15 @@ namespace MyBlog.Models
 		
 		private System.Nullable<System.DateTime> _PublishedOn;
 		
+		private System.Nullable<int> _CategoryID;
+		
+		private System.Nullable<bool> _IsPublic;
+		
 		private EntitySet<Comment> _Comments;
 		
 		private EntityRef<Post> _Post2;
+		
+		private EntityRef<Category> _Category;
 		
 		private EntityRef<Post> _Post1;
 		
@@ -320,12 +451,17 @@ namespace MyBlog.Models
     partial void OnCreatedOnChanged();
     partial void OnPublishedOnChanging(System.Nullable<System.DateTime> value);
     partial void OnPublishedOnChanged();
+    partial void OnCategoryIDChanging(System.Nullable<int> value);
+    partial void OnCategoryIDChanged();
+    partial void OnIsPublicChanging(System.Nullable<bool> value);
+    partial void OnIsPublicChanged();
     #endregion
 		
 		public Post()
 		{
 			this._Comments = new EntitySet<Comment>(new Action<Comment>(this.attach_Comments), new Action<Comment>(this.detach_Comments));
 			this._Post2 = default(EntityRef<Post>);
+			this._Category = default(EntityRef<Category>);
 			this._Post1 = default(EntityRef<Post>);
 			OnCreated();
 		}
@@ -433,6 +569,50 @@ namespace MyBlog.Models
 				}
 			}
 		}
+      
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CategoryID", DbType="Int")]
+		public System.Nullable<int> CategoryID
+		{
+			get
+			{
+				return this._CategoryID;
+			}
+			set
+			{
+				if ((this._CategoryID != value))
+				{
+					if (this._Category.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCategoryIDChanging(value);
+					this.SendPropertyChanging();
+					this._CategoryID = value;
+					this.SendPropertyChanged("CategoryID");
+					this.OnCategoryIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsPublic", DbType="Bit")]
+		public System.Nullable<bool> IsPublic
+		{
+			get
+			{
+				return this._IsPublic;
+			}
+			set
+			{
+				if ((this._IsPublic != value))
+				{
+					this.OnIsPublicChanging(value);
+					this.SendPropertyChanging();
+					this._IsPublic = value;
+					this.SendPropertyChanged("IsPublic");
+					this.OnIsPublicChanged();
+				}
+			}
+		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Post_Comment", Storage="_Comments", ThisKey="PostID", OtherKey="PostID")]
 		public EntitySet<Comment> Comments
@@ -472,6 +652,40 @@ namespace MyBlog.Models
 						value.Post1 = this;
 					}
 					this.SendPropertyChanged("Post2");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Category_Post", Storage="_Category", ThisKey="CategoryID", OtherKey="CategoryID", IsForeignKey=true)]
+		public Category Category
+		{
+			get
+			{
+				return this._Category.Entity;
+			}
+			set
+			{
+				Category previousValue = this._Category.Entity;
+				if (((previousValue != value) 
+							|| (this._Category.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Category.Entity = null;
+						previousValue.Posts.Remove(this);
+					}
+					this._Category.Entity = value;
+					if ((value != null))
+					{
+						value.Posts.Add(this);
+						this._CategoryID = value.CategoryID;
+					}
+					else
+					{
+						this._CategoryID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Category");
 				}
 			}
 		}

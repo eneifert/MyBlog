@@ -1,6 +1,6 @@
 namespace MyBlog.Models
 {
-    partial class EricBlogDataContext
+    partial class EricBlogDataContext : IBlogDataContext
     {
     }
 }

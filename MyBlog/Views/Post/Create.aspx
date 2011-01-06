@@ -8,27 +8,14 @@
 
     <h2>Create</h2>
 
+    <% Html.EnableClientValidation(); %>
     <% using (Html.BeginForm()) {%>
         <%: Html.ValidationSummary(true) %>
 
         <fieldset>
             <legend>Fields</legend>
                                   
-            <div class="editor-label">
-                <%: Html.LabelFor(model => model.Title) %>
-            </div>
-            <div class="editor-field">
-                <%: Html.TextBoxFor(model => model.Title) %>
-                <%: Html.ValidationMessageFor(model => model.Title) %>
-            </div>
-            
-            <div class="editor-label">
-                <%: Html.LabelFor(model => model.Body) %>
-            </div>
-            <div class="editor-field">
-                <%: Html.TextBoxFor(model => model.Body) %>
-                <%: Html.ValidationMessageFor(model => model.Body) %>
-            </div>                  
+            <% Html.RenderPartial("PostFormUserControl"); %>                
             
             <p>
                 <input type="submit" value="Create" />

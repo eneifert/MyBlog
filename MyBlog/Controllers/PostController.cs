@@ -10,16 +10,21 @@ namespace MyBlog.Controllers
 {
     public class PostController : Controller
     {
-        EricBlogDataContext _ericBlogDataContext = new EricBlogDataContext();
+        private IBlogDataContext _blogDataContext;
         private const int PageSize = 8;        
      
+        public PostController(IBlogDataContext blogDataContext)
+        {
+            _blogDataContext = blogDataContext;
+        }
+
         public ActionResult Index(int page=1, string query="")
         {
-            var posts = _ericBlogDataContext.Posts.Where(x => x.Title.ToUpper().Contains(query.ToUpper()));
+            var posts = _blogDataContext.Posts.Where(x => x.Title.ToUpper().Contains(query.ToUpper()));
 
-            var list = new PagedList<Post>(posts, page -1, PageSize);
+            var list = new PagedList<Post>(posts, page, PageSize);
 
-            if (page < 1 || page > list.PageCount)
+            if (page < 0 || page > list.PageCount)
             {
                 TempData["message"] = "That page doesn't exists.";
                 return RedirectToAction("Index");
@@ -33,7 +38,7 @@ namespace MyBlog.Controllers
         // GET: /Post/Details/5
         public ActionResult Details(int id)
         {
-            var post = _ericBlogDataContext.Posts.SingleOrDefault(x => x.PostID == id);
+            var post = _blogDataContext.Posts.SingleOrDefault(x => x.PostID == id);
             if (post == null)
                 return View("404");
             return View(post);
@@ -43,6 +48,9 @@ namespace MyBlog.Controllers
         // GET: /Post/Create
         public ActionResult Create()
         {
+
+            //Uses my own custom extension method
+            ViewData["Categories"] = _blogDataContext.Categories.ToSelectList("CategoryID", "CategoryName");
             return View();
         } 
 
@@ -53,9 +61,9 @@ namespace MyBlog.Controllers
         {
             try
             {
-                post.PostID = _ericBlogDataContext.Posts.OrderByDescending(x => x.PostID).First().PostID + 1;
-                _ericBlogDataContext.Posts.InsertOnSubmit(post);
-                _ericBlogDataContext.SubmitChanges();
+                post.PostID = _blogDataContext.Posts.OrderByDescending(x => x.PostID).First().PostID + 1;
+                _blogDataContext.Posts.InsertOnSubmit(post);
+                _blogDataContext.SubmitChanges();
 
                 return RedirectToAction("Index");
             }
@@ -68,29 +76,34 @@ namespace MyBlog.Controllers
         //
         // GET: /Post/Edit/5 
         public ActionResult Edit(int id)
-        {
-            var post = _ericBlogDataContext.Posts.SingleOrDefault(x => x.PostID == id);
+        {            
+            var post = _blogDataContext.Posts.SingleOrDefault(x => x.PostID == id);
+
+            //Uses my own custom extension method
+            ViewData["Categories"] = _blogDataContext.Categories.ToSelectList("CategoryID", "CategoryName");
             return View(post);            
         }
 
         //
         // POST: /Post/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(Post post)
         {
-            var post = _ericBlogDataContext.Posts.SingleOrDefault(x => x.PostID == id);
+            //Custom form validation
+            if (post.Title.Length == 1)
+                ModelState.AddModelError("Title", "Your title has to be a little bit longer");
 
-            try
-            {                
-                UpdateModel(post, collection.ToValueProvider());
-                _ericBlogDataContext.SubmitChanges();
- 
-                return RedirectToAction("Index");
-            }
-            catch
+            ViewData["Categories"] = _blogDataContext.Categories.ToSelectList("CategoryID", "CategoryName");
+
+            if (ModelState.IsValid)
             {
-                return View(post);
+                var p = _blogDataContext.Posts.SingleOrDefault(x => x.PostID == post.PostID);
+                UpdateModel(p);
+
+                _blogDataContext.SubmitChanges();
             }
+
+            return View(post);
         }
 
         //
@@ -98,9 +111,9 @@ namespace MyBlog.Controllers
  
         public ActionResult Delete(int id)
         {
-            var post = _ericBlogDataContext.Posts.SingleOrDefault(x => x.PostID == id);
-            _ericBlogDataContext.Posts.DeleteOnSubmit(post);
-            _ericBlogDataContext.SubmitChanges();
+            var post = _blogDataContext.Posts.SingleOrDefault(x => x.PostID == id);
+            _blogDataContext.Posts.DeleteOnSubmit(post);
+            _blogDataContext.SubmitChanges();
 
             TempData["message"] = "*Post was deleted";
 
